@@ -16,7 +16,7 @@
         <v-tab @click="getNewKey()" href="#tab-3"> Sign</v-tab>
       </v-tabs>
 
-      <v-tabs-items v-model="tab">
+      <v-tabs-items v-model="tab" touchless>
         <v-tab-item :value="'tab-1'">
           <v-row>
             <v-col class="text-center">
