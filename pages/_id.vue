@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Company />
     <v-card elevation="0">
       <v-tabs
         v-model="tab"
@@ -142,7 +143,7 @@ export default {
         sign: sign,
         id_frontend_side: this.frontSrc,
         id_backend_side: this.backSrc,
-        company_id: parseInt(this.$route.params.id),
+        company_id: parseInt(localStorage.getItem("company_id")) || 0,
       };
       this.$axios
         .post(this.endpoint, payload)
@@ -154,7 +155,6 @@ export default {
           this.frontSrc = null;
           this.backSrc = null;
           this.$refs["signPad"].clear();
-
           this.tab = "tab-1";
         })
         .catch((e) => {
