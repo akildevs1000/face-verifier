@@ -6,8 +6,8 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - test-nuxt-app',
-    title: 'test-nuxt-app',
+    titleTemplate: '',
+    title: 'myhotel2cloud',
     htmlAttrs: {
       lang: 'en'
     },
@@ -44,7 +44,22 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/pwa',
   ],
+
+  pwa: {
+    manifest: {
+      name: 'myhotel2cloud',
+      short_name: 'myhotel2cloud',
+      description: 'myhotel2cloud',
+      lang: 'en',
+      useWebmanifestExtension: false,
+    },
+    // icon: {
+    //   // This will auto-generate the icons from your favicon
+    //   source: '/favicon.png',
+    // },
+  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
