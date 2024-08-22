@@ -138,6 +138,18 @@ export default {
     },
     submit(sign) {
       this.loading = true;
+      if (!this.captured_photo) {
+        alert("Face Image is required");
+        return;
+      }
+      if (!this.frontSrc) {
+        alert("ID Photo is required (front)");
+        return;
+      }
+      if (!this.backSrc) {
+        alert("ID Photo is required (back)");
+        return;
+      }
       let payload = {
         captured_photo: this.captured_photo,
         sign: sign,
