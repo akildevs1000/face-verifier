@@ -19,54 +19,52 @@
 
       <v-tabs-items v-model="tab" touchless>
         <v-tab-item :value="'tab-1'">
-          <v-row>
-            <v-col class="text-center">
-              <v-container>
-                <CameraVideoBox
-                  v-if="tab == 'tab-1'"
-                  :key="compId"
-                  :boxProps="{
-                    title: `Face must be in the box`,
-                    position: `absolute`,
-                    border: `2px solid red`,
-                    width: `320px`,
-                    height: `320px`,
-                    top: `105px`,
-                    left: `395px`,
-                  }"
-                  facingMode="user"
-                  @imageSrc="(e) => (captured_photo = e)"
-                  @next="tab = `tab-2`"
-                />
-              </v-container>
-            </v-col>
-          </v-row>
+          <CameraFace
+            v-if="tab == 'tab-1'"
+            ref="cameraBox"
+            :key="compId"
+            @imageSrc="
+              (e) => {
+                captured_photo = e;
+                if ((captured_photo = e)) {
+                  tab = `tab-2`;
+                }
+              }
+            "
+          >
+          </CameraFace>
         </v-tab-item>
         <v-tab-item :value="'tab-2'">
-          <v-row>
-            <v-col class="text-center">
-              <v-container>
-                <CameraVideoBoxForId
-                  v-if="tab == 'tab-2'"
-                  :key="compId"
-                  :boxProps="{
-                    title: `Card must be in the box`,
-                    position: `absolute`,
-                    border: `2px solid red`,
-                    width: `550px`,
-                    height: `280px`,
-                    top: `115px`,
-                    left: `280px`,
-                  }"
-                  @front="(e) => (frontSrc = e)"
-                  @back="(e) => (backSrc = e)"
-                  @prev="tab = `tab-1`"
-                  @next="tab = `tab-3`"
-                  :isBack="true"
-                />
-              </v-container>
-            </v-col>
-          </v-row>
+          <CameraFront
+            v-if="tab == 'tab-2'"
+            ref="cameraBox"
+            :key="compId"
+            @imageSrc="
+              (e) => {
+                captured_photo = e;
+                if ((captured_photo = e)) {
+                  tab = `tab-3`;
+                }
+              }
+            "
+          >
+          </CameraFront>
+        </v-tab-item>
+        <v-tab-item :value="'tab-3'">
+          <CameraFace
+            v-if="tab == 'tab-3'"
+            ref="cameraBox"
+            :key="compId"
+            @imageSrc="
+              (e) => {
+                captured_photo = e;
+                if ((captured_photo = e)) {
+                  tab = `tab-4`;
+                }
+              }
+            "
+          >
+          </CameraFace>
         </v-tab-item>
         <v-tab-item :value="'tab-3'">
           <v-container fluid class="mt-12">
@@ -119,6 +117,9 @@ export default {
     key: 1,
   }),
   methods: {
+    triggerChildMethod() {
+      this.$refs["cameraBox"].captureFace();
+    },
     getNewKey() {
       const characters =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
