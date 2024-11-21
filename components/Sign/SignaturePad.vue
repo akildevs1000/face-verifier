@@ -1,23 +1,21 @@
 <template>
-  <div>
-    <VueSignaturePad style="border: 1px solid #6946dd" ref="signaturePad"  height="590px" />
-    <v-toolbar  class="mb-5">
-      <v-row>
-        <v-col cols="4" class="text-left">
-          <v-icon large color="primary" @click="clear">mdi-reload</v-icon>
-        </v-col>
-        <v-col cols="4" class="text-center">
-          <v-icon large color="primary" @click="save">mdi-floppy</v-icon>
-        </v-col>
-        <v-col class="text-right">
-          <v-icon large color="primary" @click="$emit(`prev`)"
-            >mdi-chevron-left-circle</v-icon
-          >
-        </v-col>
-      </v-row>
-    </v-toolbar>
-   
-  </div>
+  <v-container>
+    <VueSignaturePad
+      style="border: 1px solid #6946dd"
+      ref="signaturePad"
+      height="590px"
+    />
+    <v-row>
+      <v-col class="text-center pa-10">
+        <v-btn color="primary" @click="clear">
+          <v-icon left>mdi-reload</v-icon> Retake
+        </v-btn>
+        <v-btn id="capture" color="primary" @click="save">
+          <v-icon left>mdi-check</v-icon>Submit
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -39,7 +37,7 @@ export default {
     },
     save() {
       const { data } = this.$refs.signaturePad.saveSignature();
-      if(!data) {
+      if (!data) {
         alert(`Signature is required`);
         return;
       }

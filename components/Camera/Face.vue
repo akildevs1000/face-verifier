@@ -1,6 +1,14 @@
 <template>
   <div class="text-center">
     <style scoped>
+      body {
+        margin: 15px;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
       .overlay {
         position: absolute;
         top: 0;
@@ -11,7 +19,19 @@
 
       #video-container {
         position: relative;
-        display: inline-block;
+        width: calc(98vw - 15px); /* Full width minus padding */
+        height: calc(85vh - 10px); /* Full height minus padding */
+      }
+
+      video,
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%; /* Fill the container width */
+        height: 100%; /* Fill the container height */
+        object-fit: cover; /* Maintain proper aspect ratio */
+        border-radius: 10px; /* Optional: Rounded corners */
       }
     </style>
     <v-dialog v-model="tempDialog" width="700px">
@@ -38,39 +58,18 @@
       </v-container>
     </v-dialog>
 
-    <v-card-text>
-      <v-row class="d-flex justify-center">
-        <v-col cols="12" class="text-center">
-          <div>
-            <div id="video-container">
-              <video
-                id="video"
-                ref="video"
-                autoplay
-                playsinline
-                class="video"
-              ></video>
-              <canvas id="overlay" ref="overlay" class="overlay"></canvas>
-            </div>
-          </div>
-        </v-col>
-      </v-row>
+    <div id="video-container">
+      <video id="video" ref="video" autoplay playsinline class="video"></video>
+      <canvas id="overlay" ref="overlay" class="overlay"></canvas>
+    </div>
 
-      <v-toolbar class="text-center mx-auto" style="width: 640px" dense>
-        <v-row>
-          <v-col cols="12" class="mb-1 text-center">
-            <v-btn
-              id="capture"
-              color="primary"
-              @click="captureFace"
-              class="my-4"
-            >
-              Capture Face
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-toolbar>
-    </v-card-text>
+    <v-row>
+      <v-col cols="12" class="mb-1 text-center">
+        <v-btn id="capture" color="primary" @click="captureFace" class="my-4">
+          Capture Face
+        </v-btn>
+      </v-col>
+    </v-row>
   </div>
 </template>
 

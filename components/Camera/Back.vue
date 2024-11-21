@@ -1,165 +1,188 @@
 <template>
-  <v-container>
-    <v-row justify="center">
-      <v-col cols="12" sm="8" md="6">
-        <v-card>
-          <v-card-title class="text-h5 text-center">ID Card Detection & Capture</v-card-title>
-          <v-card-subtitle class="text-center">
-            <v-btn color="primary" @click="retakePhoto" :disabled="!photoSrc">
-              Retake Photo
+  <div class="text-center">
+    <style scoped>
+      body {
+        margin: 15px;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      #video-container {
+        position: relative;
+        width: calc(98vw - 15px); /* Full width minus padding */
+        height: calc(85vh - 10px); /* Full height minus padding */
+      }
+
+      video,
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%; /* Fill the container width */
+        height: 100%; /* Fill the container height */
+        object-fit: cover; /* Maintain proper aspect ratio */
+        border-radius: 10px; /* Optional: Rounded corners */
+      }
+    </style>
+    <v-dialog v-model="tempDialog" width="700px">
+      <Close left="690" @click="close" />
+      <v-container class="white">
+        <v-row no-gutters>
+          <v-col cols="12"> <div class="text-h6">Upload ID Card (Back)</div> </v-col>
+          <v-col class="text-center pa-10">
+            <img
+              style="width: 70%"
+              v-if="photoSrc"
+              :src="photoSrc"
+              alt=""
+            />
+            <br />
+            <v-btn id="capture" color="primary" @click="close">
+              <v-icon left>mdi-reload</v-icon> Retake
             </v-btn>
-          </v-card-subtitle>
+            <v-btn id="capture" color="primary" @click="submit">
+              <v-icon left>mdi-check</v-icon>Confirm
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-dialog>
 
-          <v-card-text>
-            <v-row justify="center">
-              <v-col cols="12" class="text-center">
-                <video ref="video" autoplay playsinline class="video" />
-                <canvas ref="overlay" class="overlay"></canvas>
-              </v-col>
-            </v-row>
-
-            <v-row v-if="photoSrc" justify="center">
-              <v-col cols="12" class="text-center">
-                <v-img :src="photoSrc" alt="Captured ID Card" />
-              </v-col>
-            </v-row>
-
-            <v-divider class="my-4" />
-
-            <v-row>
-              <v-col cols="12">
-                <v-card-title class="text-h6">Log Messages</v-card-title>
-                <v-container class="log-container" style="max-height: 200px; overflow-y: auto;">
-                  <v-row v-for="(log, index) in logs" :key="index">
-                    <v-col cols="12">
-                      <v-chip class="ma-2" color="light-blue" text-color="black">
-                        {{ log }}
-                      </v-chip>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+    <v-card-text>
+      <v-row class="d-flex justify-center">
+        <v-col cols="12" class="text-center">
+          <div>
+            <div id="video-container">
+              <video
+                id="video"
+                ref="video"
+                autoplay
+                playsinline
+                class="video"
+              ></video>
+              <canvas id="overlay" ref="overlay" class="overlay"></canvas>
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+    </v-card-text>
+  </div>
 </template>
 
 <script>
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
-import "@tensorflow/tfjs";
 
 export default {
   data() {
     return {
-      model: null,
-      detectionActive: true,
-      photoSrc: null,
-      logs: [],
+      photoSrc: null, // To hold captured photo data
+      tempDialog: false,
+      model: null, // Variable for object detection model
     };
   },
   mounted() {
-    this.setupCamera();
+    this.setupObjectDetection();
   },
   methods: {
-    async setupCamera() {
-      const video = this.$refs.video;
-      const overlay = this.$refs.overlay;
-      const ctx = overlay.getContext("2d");
-
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "environment" },
-        });
-        video.srcObject = stream;
-
-        video.addEventListener("loadeddata", () => {
-          overlay.width = video.videoWidth;
-          overlay.height = video.videoHeight;
-          this.setupCardDetection();
-        });
-      } catch (err) {
-        this.logToScreen("Error accessing camera: " + err);
-        console.error("Error accessing camera: ", err);
-      }
-    },
-    async setupCardDetection() {
+    async setupObjectDetection() {
+      // Load COCO-SSD model
       this.model = await cocoSsd.load();
-      this.detectCard();
+      console.log("COCO-SSD model loaded.");
+
+      // Access the camera
+      navigator.mediaDevices
+        .getUserMedia({ video: { facingMode: "environment" } })
+        .then((stream) => {
+          this.$refs.video.srcObject = stream;
+          this.$refs.video.addEventListener("loadeddata", () => {
+            this.$refs.overlay.width = this.$refs.video.videoWidth;
+            this.$refs.overlay.height = this.$refs.video.videoHeight;
+            this.detectObjects();
+          });
+        })
+        .catch((err) => console.error("Error accessing camera: ", err));
     },
-    async detectCard() {
-      if (!this.model || !this.detectionActive) return;
+    async detectObjects() {
+      if (!this.model) return;
 
-      const video = this.$refs.video;
-      const overlay = this.$refs.overlay;
-      const ctx = overlay.getContext("2d");
-
-      const predictions = await this.model.detect(video);
+      const ctx = this.$refs.overlay.getContext("2d");
+      const predictions = await this.model.detect(this.$refs.video);
 
       // Clear the previous frame
-      ctx.clearRect(0, 0, overlay.width, overlay.height);
+      ctx.clearRect(0, 0, this.$refs.overlay.width, this.$refs.overlay.height);
 
-      let cardDetected = false;
-
+      // Loop through each prediction
       predictions.forEach((prediction) => {
-        if (
-          prediction.class === "cell phone" ||
-          prediction.class === "book"
-        ) {
-          const [startX, startY, width, height] = prediction.bbox;
+        // Draw the bounding box if the object is a "person" or other relevant label
+        if (prediction.class === "cell phone" || prediction.class === "book") {
+          // Replace "person" with your ID card label if needed
+          const start = prediction.bbox.slice(0, 2);
+          const end = [
+            start[0] + prediction.bbox[2],
+            start[1] + prediction.bbox[3],
+          ];
 
-          // Draw the bounding box for the detected card
-          ctx.strokeStyle = "blue";
+          const size = [prediction.bbox[2], prediction.bbox[3]];
+
+          // Draw the bounding box
+          ctx.strokeStyle = "red";
           ctx.lineWidth = 2;
-          ctx.strokeRect(startX, startY, width, height);
+          ctx.strokeRect(start[0], start[1], size[0], size[1]);
 
-          this.logToScreen(
-            `Detected ${prediction.class} with bounding box at ${startX}, ${startY}, ${width}, ${height}`
-          );
-
-          // Capture the card image when detected
-          this.captureCardImage(startX, startY, width, height);
-
-          cardDetected = true;
+          // Automatically capture when an object is detected
+          if (!this.photoSrc) {
+            this.captureIDCard(prediction);
+          }
         }
       });
 
-      if (!cardDetected) {
-        requestAnimationFrame(this.detectCard);
-      }
+      requestAnimationFrame(this.detectObjects);
     },
-    captureCardImage(startX, startY, width, height) {
-      // Stop further detection
-      this.detectionActive = false;
+    captureIDCard(prediction) {
+      const bbox = prediction.bbox;
+      const [x, y, width, height] = bbox;
 
-      // Create a temporary canvas to extract the card
-      const video = this.$refs.video;
+      // Create a temporary canvas to extract the ID card area
       const tempCanvas = document.createElement("canvas");
       const tempCtx = tempCanvas.getContext("2d");
       tempCanvas.width = width;
       tempCanvas.height = height;
 
-      tempCtx.drawImage(video, startX, startY, width, height, 0, 0, width, height);
+      tempCtx.drawImage(
+        this.$refs.video,
+        x,
+        y,
+        width,
+        height, // Source coordinates
+        0,
+        0,
+        width,
+        height // Destination coordinates
+      );
 
-      // Display the captured ID card
+      // Display the extracted ID card image
       this.photoSrc = tempCanvas.toDataURL("image/png");
-      this.logToScreen("Captured ID card image.");
+      this.tempDialog = true;
     },
-    retakePhoto() {
-      this.logToScreen("Retaking photo...");
-      this.photoSrc = null; // Clear the previous photo
-      this.detectionActive = true; // Restart detection
-      this.detectCard(); // Resume detection
+    close() {
+      this.photoSrc = null;
+      this.tempDialog = false;
+      this.$emit("imageSrc", null);
     },
-    logToScreen(message) {
-      this.logs.push(message);
-      // Automatically scroll to the latest log message
-      this.$nextTick(() => {
-        const logContainer = this.$el.querySelector(".log-container");
-        logContainer.scrollTop = logContainer.scrollHeight;
-      });
+    submit() {
+      this.tempDialog = false;
+      this.$emit("imageSrc", this.photoSrc);
+      this.photoSrc = null;
     },
   },
 };

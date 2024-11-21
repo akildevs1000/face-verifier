@@ -1,6 +1,14 @@
 <template>
   <div class="text-center">
     <style scoped>
+      body {
+        margin: 15px;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
       .overlay {
         position: absolute;
         top: 0;
@@ -11,20 +19,32 @@
 
       #video-container {
         position: relative;
-        display: inline-block;
+        width: calc(98vw - 15px); /* Full width minus padding */
+        height: calc(85vh - 10px); /* Full height minus padding */
+      }
+
+      video,
+      canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%; /* Fill the container width */
+        height: 100%; /* Fill the container height */
+        object-fit: cover; /* Maintain proper aspect ratio */
+        border-radius: 10px; /* Optional: Rounded corners */
       }
     </style>
     <v-dialog v-model="tempDialog" width="700px">
       <Close left="690" @click="close" />
       <v-container class="white">
         <v-row no-gutters>
-          <v-col cols="12"> <div class="text-h6">Upload ID Card</div> </v-col>
+          <v-col cols="12"> <div class="text-h6">Upload ID Card (Front)</div> </v-col>
           <v-col class="text-center pa-10">
             <img
               style="width: 70%"
               v-if="photoSrc"
               :src="photoSrc"
-              alt="Captured ID Card"
+              alt=""
             />
             <br />
             <v-btn id="capture" color="primary" @click="close">

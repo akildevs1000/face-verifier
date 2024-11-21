@@ -3,6 +3,7 @@
     <Company />
     <v-card elevation="0">
       <v-tabs
+        style="display: none"
         v-model="tab"
         background-color="deep-purple accent-4"
         centered
@@ -15,6 +16,8 @@
         <v-tab @click="getNewKey()" href="#tab-2"> ID </v-tab>
 
         <v-tab @click="getNewKey()" href="#tab-3"> Sign</v-tab>
+
+        <v-tab @click="getNewKey()" href="#tab-4"> Sign</v-tab>
       </v-tabs>
 
       <v-tabs-items v-model="tab" touchless>
@@ -41,8 +44,8 @@
             :key="compId"
             @imageSrc="
               (e) => {
-                captured_photo = e;
-                if ((captured_photo = e)) {
+                frontSrc = e;
+                if ((frontSrc = e)) {
                   tab = `tab-3`;
                 }
               }
@@ -51,46 +54,39 @@
           </CameraFront>
         </v-tab-item>
         <v-tab-item :value="'tab-3'">
-          <CameraFace
+          <CameraBack
             v-if="tab == 'tab-3'"
             ref="cameraBox"
             :key="compId"
             @imageSrc="
               (e) => {
-                captured_photo = e;
-                if ((captured_photo = e)) {
+                backSrc = e;
+                if ((backSrc = e)) {
                   tab = `tab-4`;
                 }
               }
             "
           >
-          </CameraFace>
+          </CameraBack>
         </v-tab-item>
-        <v-tab-item :value="'tab-3'">
-          <v-container fluid class="mt-12">
-            <v-row>
-              <v-col cols="8">
-                <SignSignaturePad
-                  ref="signPad"
-                  @prev="tab = `tab-2`"
-                  @sign="handleSign"
-                />
-              </v-col>
-              <v-col cols="4">
-                <v-row>
-                  <v-col cols="12">
-                    <v-img :src="captured_photo"></v-img>
-                  </v-col>
-                  <v-col cols="12">
-                    <v-img :src="frontSrc"></v-img>
-                  </v-col>
-                  <v-col cols="12">
-                    <v-img :src="backSrc"></v-img>
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-container>
+        <v-tab-item :value="'tab-4'">
+          <SignSignaturePad
+            ref="signPad"
+            @prev="tab = `tab-3`"
+            @sign="handleSign"
+          />
+
+          <!-- <v-row>
+            <v-col cols="12">
+              <v-img :src="captured_photo"></v-img>
+            </v-col>
+            <v-col cols="12">
+              <v-img :src="frontSrc"></v-img>
+            </v-col>
+            <v-col cols="12">
+              <v-img :src="backSrc"></v-img>
+            </v-col>
+          </v-row> -->
         </v-tab-item>
       </v-tabs-items>
     </v-card>
@@ -104,7 +100,7 @@
 export default {
   data: () => ({
     endpoint: `https://backend.myhotel2cloud.com/api/update-pic-and-sign`,
-    // endpoint: `https://hms-backend.test/api/update-pic-and-sign`,
+    // endpoint: `http://192.168.2.8:8000/api/update-pic-and-sign`,
     errorResponse: null,
     errorResponseDialog: false,
     compId: null,
@@ -156,7 +152,7 @@ export default {
         sign: sign,
         id_frontend_side: this.frontSrc,
         id_backend_side: this.backSrc,
-        company_id: parseInt(localStorage.getItem("company_id")) || 0,
+        company_id: 3,
       };
       this.$axios
         .post(this.endpoint, payload)
