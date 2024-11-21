@@ -38,14 +38,11 @@
       <Close left="690" @click="close" />
       <v-container class="white">
         <v-row no-gutters>
-          <v-col cols="12"> <div class="text-h6">Upload ID Card (Back)</div> </v-col>
+          <v-col cols="12">
+            <div class="text-h6">Upload ID Card (Back)</div>
+          </v-col>
           <v-col class="text-center pa-10">
-            <img
-              style="width: 70%"
-              v-if="photoSrc"
-              :src="photoSrc"
-              alt=""
-            />
+            <img style="width: 70%" v-if="photoSrc" :src="photoSrc" alt="" />
             <br />
             <v-btn id="capture" color="primary" @click="close">
               <v-icon left>mdi-reload</v-icon> Retake
@@ -92,6 +89,22 @@ export default {
   },
   mounted() {
     this.setupObjectDetection();
+  },
+  beforeDestroy() {
+    // Dispose of COCO-SSD model if applicable
+    if (this.model) {
+      this.model.dispose?.();
+      this.model = null;
+      console.log("COCO-SSD model disposed.");
+    }
+
+    // Stop the video stream
+    if (this.$refs.video && this.$refs.video.srcObject) {
+      const stream = this.$refs.video.srcObject;
+      stream.getTracks().forEach((track) => track.stop());
+      this.$refs.video.srcObject = null;
+      console.log("Video stream stopped.");
+    }
   },
   methods: {
     async setupObjectDetection() {

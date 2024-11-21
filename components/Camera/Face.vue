@@ -84,6 +84,22 @@ export default {
       tempDialog: false,
     };
   },
+  beforeDestroy() {
+    // Dispose of BlazeFace model if applicable
+    if (this.model) {
+      this.model.dispose?.();
+      this.model = null;
+      console.log("BlazeFace model disposed.");
+    }
+
+    // Stop the video stream
+    if (this.$refs.video && this.$refs.video.srcObject) {
+      const stream = this.$refs.video.srcObject;
+      stream.getTracks().forEach((track) => track.stop());
+      this.$refs.video.srcObject = null;
+      console.log("Video stream stopped.");
+    }
+  },
   mounted() {
     this.setupFaceDetection();
   },
