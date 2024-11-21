@@ -95,7 +95,7 @@ export default {
   build: {
   },
   server: {
-    host: "localhost",
-    port: "3004",
+    host: "159.89.168.142",
+    port: "3333",
   }
 }
