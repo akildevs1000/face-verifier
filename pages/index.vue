@@ -1,6 +1,43 @@
 <template>
   <div>
-    <Company />
+    <style>
+      .v-dialog.v-dialog--active {
+        box-shadow: none !important;
+      }
+    </style>
+
+    <!-- <Company /> -->
+    <v-dialog v-model="tempDialog" width="550px">
+      <div
+        class="none lighten-2 px-2"
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+        "
+      >
+        <v-avatar
+          v-if="isSuccess"
+          class="green"
+          style="border: 3px solid"
+          size="100"
+          id="capture"
+        >
+          <v-icon class="white" size="40" color="green">mdi-thumb-up</v-icon>
+        </v-avatar>
+        <v-avatar
+          v-else
+          class="red"
+          style="border: 3px solid"
+          size="100"
+          id="capture"
+        >
+          <v-icon class="white" size="40" color="red">mdi-thumb-up</v-icon>
+        </v-avatar>
+      </div>
+    </v-dialog>
     <v-card elevation="0">
       <v-tabs
         style="display: none"
@@ -99,6 +136,8 @@
 <script>
 export default {
   data: () => ({
+    isSuccess: false,
+    tempDialog: false,
     endpoint: `https://backend.myhotel2cloud.com/api/update-pic-and-sign`,
     // endpoint: `http://192.168.2.8:8000/api/update-pic-and-sign`,
     errorResponse: null,
@@ -158,7 +197,13 @@ export default {
         .post(this.endpoint, payload)
         .then((res) => {
           this.loading = false;
-          alert("success");
+          this.tempDialog = true;
+
+          setTimeout(() => {
+            this.tempDialog = true;
+          }, 3000);
+          
+          this.isSuccess = true;
           this.captured_photo = null;
           this.sign = null;
           this.frontSrc = null;
@@ -167,6 +212,8 @@ export default {
           this.tab = "tab-1";
         })
         .catch((e) => {
+          this.tempDialog = true;
+          this.isSuccess = false;
           this.loading = false;
           this.errorResponse = e;
           this.errorResponseDialog = true;

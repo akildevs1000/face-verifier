@@ -1,21 +1,53 @@
 <template>
-  <v-container>
-    <VueSignaturePad
-      style="border: 1px solid #6946dd"
-      ref="signaturePad"
-      height="590px"
-    />
-    <v-row>
-      <v-col class="text-center pa-10">
-        <v-btn color="primary" @click="clear">
-          <v-icon left>mdi-reload</v-icon> Retake
-        </v-btn>
-        <v-btn id="capture" color="primary" @click="save">
-          <v-icon left>mdi-check</v-icon>Submit
-        </v-btn>
-      </v-col>
-    </v-row>
-  </v-container>
+  <div
+    style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    "
+    class="pa-5"
+  >
+    <div
+      class="text-h6"
+      style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      "
+    >
+      Sign Here
+      <VueSignaturePad
+        style="border: 1px solid #6946dd; flex: 1; width: calc(80vw - 15px)"
+        ref="signaturePad"
+        height="550px"
+      />
+    </div>
+
+    <div
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+      "
+    >
+      <v-avatar
+        style="border: 3px solid"
+        size="90"
+        color="primary"
+        @click="clear"
+      >
+        <v-icon class="white" color="primary" size="40">mdi-reload</v-icon>
+      </v-avatar>
+
+      <v-avatar style="border: 3px solid" size="90" color="green" @click="save">
+        <v-icon class="white" color="green" size="40">mdi-thumb-up</v-icon>
+      </v-avatar>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -27,6 +59,7 @@ export default {
     },
   },
   data: () => ({
+    tempDialog: false,
     dialog: false,
     sign: false,
   }),

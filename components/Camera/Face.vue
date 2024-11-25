@@ -2,12 +2,9 @@
   <div class="text-center">
     <style scoped>
       body {
-        margin: 15px;
-        padding: 0;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
       }
       .overlay {
         position: absolute;
@@ -19,8 +16,8 @@
 
       #video-container {
         position: relative;
-        width: calc(98vw - 15px); /* Full width minus padding */
-        height: calc(85vh - 10px); /* Full height minus padding */
+        width: calc(85vw); /* Full width minus padding */
+        height: calc(85vh); /* Full height minus padding */
       }
 
       video,
@@ -34,42 +31,95 @@
         border-radius: 10px; /* Optional: Rounded corners */
       }
     </style>
-    <v-dialog v-model="tempDialog" width="700px">
-      <Close left="690" @click="close" />
-      <v-container class="white">
-        <v-row no-gutters>
-          <v-col cols="12"> <div class="text-h6">Upload Face</div> </v-col>
-          <v-col class="text-center pa-10">
-            <img
-              style="width: 70%"
-              v-if="photoSrc"
-              :src="photoSrc"
-              alt="Captured Face"
-            />
-            <br />
-            <v-btn id="capture" color="primary" @click="close">
-              <v-icon left>mdi-reload</v-icon> Retake
-            </v-btn>
-            <v-btn id="capture" color="primary" @click="submit">
-              <v-icon left>mdi-check</v-icon>Confirm
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
+    <v-dialog v-model="tempDialog" width="550px">
+      <Close left="540" @click="close" />
+
+      <v-card style="overflow-y: hidden">
+        <div
+          class="white"
+          style="
+            display: flex;
+            justify-content: space-between;
+            overflow: hidden;
+          "
+        >
+          <!-- Left Image Section -->
+          <img
+            style="width: 100%"
+            v-if="photoSrc"
+            :src="photoSrc"
+            alt="Captured Face"
+          />
+
+          <!-- Right Controls Section -->
+          <div
+            class="grey lighten-2 px-2"
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              gap: 10px;
+            "
+          >
+            <v-avatar
+              style="border: 3px solid #00b050"
+              size="70"
+              id="capture"
+              @click="submit"
+            >
+              <v-icon class="white" size="40" color="green"
+                >mdi-thumb-up</v-icon
+              >
+            </v-avatar>
+            <v-avatar
+              style="border: 3px solid"
+              size="70"
+              color="red"
+              @click="close"
+            >
+              <v-icon class="white" size="40" color="red">mdi-camera</v-icon>
+            </v-avatar>
+          </div>
+        </div>
+      </v-card>
     </v-dialog>
 
-    <div id="video-container">
-      <video id="video" ref="video" autoplay playsinline class="video"></video>
-      <canvas id="overlay" ref="overlay" class="overlay"></canvas>
-    </div>
+    <div style="display: flex; padding: 10px 0">
+      <div id="video-container">
+        <video
+          id="video"
+          ref="video"
+          autoplay
+          playsinline
+          class="video"
+        ></video>
+        <canvas id="overlay" ref="overlay" class="overlay"></canvas>
+      </div>
 
-    <v-row>
-      <v-col cols="12" class="mb-1 text-center">
-        <v-btn id="capture" color="primary" @click="captureFace" class="my-4">
-          Capture Face
-        </v-btn>
-      </v-col>
-    </v-row>
+      <!-- origin from #76a2a0  -->
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #e0e0e0;
+          width: 25%;
+          border-radius: 10px;
+        "
+      >
+        <v-avatar
+          style="border: 3px solid"
+          size="100"
+          id="capture"
+          color="primary"
+          @click="captureFace"
+          class="my-4"
+        >
+          <v-icon class="white" color="primary" size="40">mdi-camera</v-icon>
+        </v-avatar>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -122,6 +172,33 @@ export default {
         })
         .catch((err) => console.error("Error accessing camera: ", err));
     },
+    // async detectFace() {
+    //   if (!this.model) return;
+
+    //   const ctx = this.$refs.overlay.getContext("2d");
+    //   const predictions = await this.model.estimateFaces(
+    //     this.$refs.video,
+    //     false
+    //   );
+
+    //   // Clear the previous frame
+    //   ctx.clearRect(0, 0, this.$refs.overlay.width, this.$refs.overlay.height);
+
+    //   if (predictions.length > 0) {
+    //     predictions.forEach((prediction) => {
+    //       const start = prediction.topLeft;
+    //       const end = prediction.bottomRight;
+    //       const size = [end[0] - start[0], end[1] - start[1]];
+
+    //       // Draw the bounding box
+    //       ctx.strokeStyle = "red";
+    //       ctx.lineWidth = 2;
+    //       ctx.strokeRect(start[0], start[1], size[0], size[1]);
+    //     });
+    //   }
+
+    //   requestAnimationFrame(this.detectFace);
+    // },
     async detectFace() {
       if (!this.model) return;
 
@@ -138,12 +215,24 @@ export default {
         predictions.forEach((prediction) => {
           const start = prediction.topLeft;
           const end = prediction.bottomRight;
-          const size = [end[0] - start[0], end[1] - start[1]];
+          const padding = 50; // Increase this value to make the box larger
+          const size = [
+            end[0] - start[0] + padding * 2,
+            end[1] - start[1] + padding * 2,
+          ];
+
+          // Apply padding to the starting coordinates
+          const adjustedStart = [start[0] - padding, start[1] - padding];
 
           // Draw the bounding box
           ctx.strokeStyle = "red";
           ctx.lineWidth = 2;
-          ctx.strokeRect(start[0], start[1], size[0], size[1]);
+          ctx.strokeRect(
+            adjustedStart[0],
+            adjustedStart[1] - 30,
+            size[0],
+            size[1]
+          );
         });
       }
 
@@ -158,8 +247,15 @@ export default {
           const start = prediction.topLeft;
           const end = prediction.bottomRight;
 
-          const width = end[0] - start[0];
-          const height = end[1] - start[1];
+          const padding = 50; // Increase this value to add more padding
+
+          // Adjusted width and height with padding
+          const width = end[0] - start[0] + padding * 2;
+          const height = end[1] - start[1] + padding * 2;
+
+          // Adjusted start coordinates with padding
+          const adjustedStartX = Math.max(0, start[0] - padding);
+          const adjustedStartY = Math.max(0, start[1] - padding);
 
           // Create a temporary canvas to extract the face
           const tempCanvas = document.createElement("canvas");
@@ -169,8 +265,8 @@ export default {
 
           tempCtx.drawImage(
             this.$refs.video,
-            start[0],
-            start[1],
+            adjustedStartX,
+            adjustedStartY - 30,
             width,
             height, // Source coordinates
             0,
