@@ -183,8 +183,8 @@ export default {
       const video = this.$refs.video;
 
       // Set the dimensions for the capture canvas (half the size of the overlay)
-      tempCanvas.width = overlay.width / 2;
-      tempCanvas.height = overlay.height / 2;
+      tempCanvas.width = overlay.width / 1.4;
+      tempCanvas.height = overlay.height / 1.4;
 
       // Adjust the starting position based on the static bounding box area
       const startX = (overlay.width - tempCanvas.width) / 2;
