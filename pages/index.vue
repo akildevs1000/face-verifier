@@ -5,9 +5,9 @@
         box-shadow: none !important;
       }
     </style>
-
     <!-- <Company /> -->
     <v-dialog v-model="tempDialog" width="550px">
+      <Close left="370" @click="tempDialog = false" />
       <div
         class="none lighten-2 px-2"
         style="
@@ -18,24 +18,39 @@
           gap: 10px;
         "
       >
-        <v-avatar
-          v-if="isSuccess"
-          class="green"
-          style="border: 3px solid"
-          size="100"
-          id="capture"
-        >
-          <v-icon class="white" size="40" color="green">mdi-thumb-up</v-icon>
-        </v-avatar>
-        <v-avatar
-          v-else
-          class="red"
-          style="border: 3px solid"
-          size="100"
-          id="capture"
-        >
-          <v-icon class="white" size="40" color="red">mdi-thumb-up</v-icon>
-        </v-avatar>
+        <v-card>
+          <v-container>
+            <v-card-text>
+              <div class="text-center">
+                <v-avatar
+                  v-if="isSuccess"
+                  class="green"
+                  style="border: 3px solid"
+                  size="100"
+                  id="capture"
+                >
+                  <v-icon class="white" size="40" color="green"
+                    >mdi-thumb-up</v-icon
+                  >
+                </v-avatar>
+                <v-avatar
+                  v-else
+                  class="red"
+                  style="border: 3px solid"
+                  size="100"
+                  id="capture"
+                >
+                  <v-icon class="white" size="40" color="red"
+                    >mdi-thumb-up</v-icon
+                  >
+                </v-avatar>
+                <div class="mt-5">
+                  Your ref number is: <b>{{ code }}</b>
+                </div>
+              </div>
+            </v-card-text>
+          </v-container>
+        </v-card>
       </div>
     </v-dialog>
     <v-card elevation="0">
@@ -150,8 +165,17 @@ export default {
     sign: null,
     loading: false,
     key: 1,
+    code: null,
   }),
   methods: {
+    testSuccess() {
+      this.generateRandomCode();
+    },
+    generateRandomCode() {
+      this.code = Math.floor(1000 + Math.random() * 9000);
+
+      return this.code;
+    },
     triggerChildMethod() {
       this.$refs["cameraBox"].captureFace();
     },
@@ -186,34 +210,35 @@ export default {
         alert("ID Photo is required (back)");
         return;
       }
+
       let payload = {
         captured_photo: this.captured_photo,
         sign: sign,
         id_frontend_side: this.frontSrc,
         id_backend_side: this.backSrc,
         company_id: 3,
+        code: this.generateRandomCode(),
       };
       this.$axios
         .post(this.endpoint, payload)
         .then((res) => {
-          this.loading = false;
           this.tempDialog = true;
-
-          setTimeout(() => {
-            this.tempDialog = true;
-          }, 3000);
-          
+          this.loading = false;
           this.isSuccess = true;
           this.captured_photo = null;
           this.sign = null;
           this.frontSrc = null;
           this.backSrc = null;
+
+          // setTimeout(() => {
+          //   this.tempDialog = false;
+          //   this.code = null;
+          // }, 3000);
+
           this.$refs["signPad"].clear();
           this.tab = "tab-1";
         })
         .catch((e) => {
-          this.tempDialog = true;
-          this.isSuccess = false;
           this.loading = false;
           this.errorResponse = e;
           this.errorResponseDialog = true;
