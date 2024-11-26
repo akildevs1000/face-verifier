@@ -31,8 +31,8 @@
         border-radius: 10px; /* Optional: Rounded corners */
       }
     </style>
-    <v-dialog v-model="tempDialog" width="550px">
-      <Close left="540" @click="close" />
+    <v-dialog v-model="tempDialog" width="750px">
+      <Close left="740" @click="close" />
 
       <v-card style="overflow-y: hidden">
         <div
@@ -164,14 +164,31 @@ export default {
 
       // Draw a static bounding box
       const boxPadding = 50;
-      const boxWidth = overlay.width / 1.4;
-      const boxHeight = overlay.height / 1.4;
+      const boxWidth = overlay.width / 1.2;
+      const boxHeight = overlay.height / 1.2;
       const boxX = (overlay.width - boxWidth) / 2;
       const boxY = (overlay.height - boxHeight) / 2;
 
       ctx.strokeStyle = "red";
       ctx.lineWidth = 2;
       ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+
+      // let isVisible = true;
+
+      // Create an interval to toggle the visibility of the box
+      // setInterval(() => {
+      //   ctx.clearRect(0, 0, overlay.width, overlay.height); // Clear the previous drawing
+
+      //   if (isVisible) {
+      //     // Draw the bounding box if it's visible
+      //     ctx.strokeStyle = "red";
+      //     ctx.lineWidth = 2;
+      //     ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
+      //   }
+
+      //   // Toggle visibility
+      //   isVisible = !isVisible;
+      // }, 500); // Toggle every 500ms (0.5 seconds)
     },
     captureFace() {
       // Create a temporary canvas to capture the box area
@@ -183,8 +200,8 @@ export default {
       const video = this.$refs.video;
 
       // Set the dimensions for the capture canvas (half the size of the overlay)
-      tempCanvas.width = overlay.width / 1.4;
-      tempCanvas.height = overlay.height / 1.4;
+      tempCanvas.width = overlay.width / 1.2;
+      tempCanvas.height = overlay.height / 1.2;
 
       // Adjust the starting position based on the static bounding box area
       const startX = (overlay.width - tempCanvas.width) / 2;
