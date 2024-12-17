@@ -162,34 +162,16 @@ export default {
       overlay.width = this.$refs.video.videoWidth || 640;
       overlay.height = this.$refs.video.videoHeight || 480;
 
-      // Draw a static bounding box
-      const boxPadding = 50;
-      const boxWidth = overlay.width / 1.2;
-      const boxHeight = overlay.height / 1.2;
+      const boxWidth = (overlay.width / 1.2) * 0.95; // Reduced width by 20%
+      const boxHeight = (overlay.height / 1.2) * 0.78; // Reduced height by 20%
       const boxX = (overlay.width - boxWidth) / 2;
       const boxY = (overlay.height - boxHeight) / 2;
 
       ctx.strokeStyle = "red";
       ctx.lineWidth = 2;
-      ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
-
-      // let isVisible = true;
-
-      // Create an interval to toggle the visibility of the box
-      // setInterval(() => {
-      //   ctx.clearRect(0, 0, overlay.width, overlay.height); // Clear the previous drawing
-
-      //   if (isVisible) {
-      //     // Draw the bounding box if it's visible
-      //     ctx.strokeStyle = "red";
-      //     ctx.lineWidth = 2;
-      //     ctx.strokeRect(boxX, boxY, boxWidth, boxHeight);
-      //   }
-
-      //   // Toggle visibility
-      //   isVisible = !isVisible;
-      // }, 500); // Toggle every 500ms (0.5 seconds)
+      ctx.strokeRect(boxX + 40, boxY + 55, boxWidth, boxHeight);
     },
+
     captureFace() {
       // Create a temporary canvas to capture the box area
       const tempCanvas = document.createElement("canvas");
@@ -200,8 +182,8 @@ export default {
       const video = this.$refs.video;
 
       // Set the dimensions for the capture canvas (half the size of the overlay)
-      tempCanvas.width = overlay.width / 1.2;
-      tempCanvas.height = overlay.height / 1.2;
+      tempCanvas.width = (overlay.width / 1.2) * 0.95;
+      tempCanvas.height = (overlay.height / 1.2) * 0.78;
 
       // Adjust the starting position based on the static bounding box area
       const startX = (overlay.width - tempCanvas.width) / 2;
@@ -210,8 +192,8 @@ export default {
       // Draw the video frame on the temporary canvas, capturing the specified region
       tempCtx.drawImage(
         video,
-        startX,
-        startY,
+        startX + 40,
+        startY + 55,
         tempCanvas.width,
         tempCanvas.height,
         0,

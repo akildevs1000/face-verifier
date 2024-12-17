@@ -116,6 +116,7 @@
                 if ((backSrc = e)) {
                   tab = `tab-4`;
                 }
+                $store.commit(`SET_IS_DONE`, false);
               }
             "
           >
@@ -198,6 +199,8 @@ export default {
     },
     submit(sign) {
       this.loading = true;
+      this.$store.commit("SET_IS_DONE", true);
+
       if (!this.captured_photo) {
         alert("Face Image is required");
         return;
@@ -230,18 +233,15 @@ export default {
           this.frontSrc = null;
           this.backSrc = null;
 
-          // setTimeout(() => {
-          //   this.tempDialog = false;
-          //   this.code = null;
-          // }, 3000);
+          this.$store.commit("SET_IS_DONE", false);
 
-          this.$refs["signPad"].clear();
           this.tab = "tab-1";
         })
         .catch((e) => {
           this.loading = false;
           this.errorResponse = e;
           this.errorResponseDialog = true;
+          this.$store.commit("SET_IS_DONE", false);
         });
     },
   },

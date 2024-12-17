@@ -43,8 +43,19 @@
         <v-icon class="white" color="primary" size="40">mdi-reload</v-icon>
       </v-avatar>
 
-      <v-avatar style="border: 3px solid" size="90" color="green" @click="save">
+      <!-- prevent multiple on submit -->
+      <v-avatar
+        v-if="!$store.state.isDone"
+        style="border: 3px solid"
+        size="90"
+        color="green"
+        @click="save"
+      >
         <v-icon class="white" color="green" size="40">mdi-thumb-up</v-icon>
+      </v-avatar>
+
+      <v-avatar v-else style="border: 3px solid" size="90" color="grey">
+        <v-icon class="white" color="grey" size="40">mdi-thumb-up</v-icon>
       </v-avatar>
     </div>
   </div>
@@ -59,12 +70,14 @@ export default {
     },
   },
   data: () => ({
+    isDone: false,
     tempDialog: false,
     dialog: false,
     sign: false,
   }),
   methods: {
     clear() {
+      this.$store.commit(`SET_IS_DONE`, false);
       this.$refs.signaturePad.clearSignature();
       this.sign = null;
     },
@@ -74,8 +87,9 @@ export default {
         alert(`Signature is required`);
         return;
       }
-      this.sign = data;
       this.$emit("sign", data);
+      this.$refs.signaturePad.clearSignature();
+      this.sign = null;
       this.dialog = false;
     },
   },
