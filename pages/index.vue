@@ -17,8 +17,8 @@
             <v-card-text>
               <div class="text-center">
                 <v-avatar v-if="isSuccess" size="150">
-                  <div class="primary--text" style="font-size: 30px">
-                    Ref: {{ code || "1234" }}
+                  <div class="primary--text" style="font-size: 34px">
+                    {{ code || "1234" }}
                   </div>
                 </v-avatar>
 
