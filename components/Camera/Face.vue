@@ -1,36 +1,5 @@
 <template>
   <div class="text-center">
-    <style scoped>
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1;
-        pointer-events: none;
-      }
-
-      #video-container {
-        position: relative;
-        width: calc(85vw); /* Full width minus padding */
-        height: calc(85vh); /* Full height minus padding */
-      }
-
-      video,
-      canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%; /* Fill the container width */
-        height: 100%; /* Fill the container height */
-        object-fit: cover; /* Maintain proper aspect ratio */
-        border-radius: 10px; /* Optional: Rounded corners */
-      }
-    </style>
     <v-dialog v-model="tempDialog" width="550px">
       <Close left="540" @click="close" />
 
@@ -85,7 +54,7 @@
       </v-card>
     </v-dialog>
 
-    <div style="display: flex; padding: 10px 0">
+    <div style="display: flex">
       <div id="video-container">
         <video
           id="video"
@@ -98,16 +67,7 @@
       </div>
 
       <!-- origin from #76a2a0  -->
-      <div
-        style="
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background-color: #e0e0e0;
-          width: 25%;
-          border-radius: 10px;
-        "
-      >
+      <div class="camera-btn-container">
         <v-avatar
           style="border: 3px solid"
           size="100"
@@ -172,33 +132,6 @@ export default {
         })
         .catch((err) => console.error("Error accessing camera: ", err));
     },
-    // async detectFace() {
-    //   if (!this.model) return;
-
-    //   const ctx = this.$refs.overlay.getContext("2d");
-    //   const predictions = await this.model.estimateFaces(
-    //     this.$refs.video,
-    //     false
-    //   );
-
-    //   // Clear the previous frame
-    //   ctx.clearRect(0, 0, this.$refs.overlay.width, this.$refs.overlay.height);
-
-    //   if (predictions.length > 0) {
-    //     predictions.forEach((prediction) => {
-    //       const start = prediction.topLeft;
-    //       const end = prediction.bottomRight;
-    //       const size = [end[0] - start[0], end[1] - start[1]];
-
-    //       // Draw the bounding box
-    //       ctx.strokeStyle = "red";
-    //       ctx.lineWidth = 2;
-    //       ctx.strokeRect(start[0], start[1], size[0], size[1]);
-    //     });
-    //   }
-
-    //   requestAnimationFrame(this.detectFace);
-    // },
     async detectFace() {
       if (!this.model) return;
 

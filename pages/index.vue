@@ -1,11 +1,5 @@
 <template>
   <div>
-    <style>
-      .v-dialog.v-dialog--active {
-        box-shadow: none !important;
-      }
-    </style>
-    <!-- <Company /> -->
     <v-dialog v-model="tempDialog" width="550px">
       <Close left="370" @click="tempDialog = false" />
       <div
@@ -128,18 +122,6 @@
             @prev="tab = `tab-3`"
             @sign="handleSign"
           />
-
-          <!-- <v-row>
-            <v-col cols="12">
-              <v-img :src="captured_photo"></v-img>
-            </v-col>
-            <v-col cols="12">
-              <v-img :src="frontSrc"></v-img>
-            </v-col>
-            <v-col cols="12">
-              <v-img :src="backSrc"></v-img>
-            </v-col>
-          </v-row> -->
         </v-tab-item>
       </v-tabs-items>
     </v-card>
