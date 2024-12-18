@@ -11,6 +11,7 @@
         width: 25%;
         height: 100vh;
         background: rgb(224, 224, 224);
+        position: relative;
       "
     >
       <v-avatar
@@ -36,14 +37,15 @@
         <v-icon class="white" color="primary" size="40">mdi-reload</v-icon>
       </v-avatar>
 
-      <v-avatar
-        style="border: 3px solid"
+      <v-btn
+        style="position: absolute; bottom: 10px"
         size="90"
-        color="red"
+        class="blue white--text"
+        rounded
         @click="refresh"
       >
-        <v-icon class="white" color="red" size="40">mdi-refresh</v-icon>
-      </v-avatar>
+        Refresh
+      </v-btn>
     </div>
   </div>
 </template>
