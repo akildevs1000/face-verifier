@@ -14,16 +14,6 @@
       "
     >
       <v-avatar
-        style="border: 3px solid"
-        size="90"
-        color="primary"
-        @click="clear"
-      >
-        <v-icon class="white" color="primary" size="40">mdi-reload</v-icon>
-      </v-avatar>
-
-      <!-- prevent multiple on submit -->
-      <v-avatar
         v-if="!$store.state.isDone"
         style="border: 3px solid"
         size="90"
@@ -35,6 +25,24 @@
 
       <v-avatar v-else style="border: 3px solid" size="90" color="grey">
         <v-icon class="white" color="grey" size="40">mdi-thumb-up</v-icon>
+      </v-avatar>
+
+      <v-avatar
+        style="border: 3px solid"
+        size="90"
+        color="primary"
+        @click="clear"
+      >
+        <v-icon class="white" color="primary" size="40">mdi-reload</v-icon>
+      </v-avatar>
+
+      <v-avatar
+        style="border: 3px solid"
+        size="90"
+        color="red"
+        @click="refresh"
+      >
+        <v-icon class="white" color="red" size="40">mdi-refresh</v-icon>
       </v-avatar>
     </div>
   </div>
@@ -55,6 +63,9 @@ export default {
     sign: false,
   }),
   methods: {
+    refresh() {
+      window.location.reload();
+    },
     clear() {
       this.$store.commit(`SET_IS_DONE`, false);
       this.$refs.signaturePad.clearSignature();

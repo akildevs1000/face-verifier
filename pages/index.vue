@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-dialog v-model="tempDialog" width="550px">
-      <Close left="370" @click="tempDialog = false" />
+    <v-dialog v-model="tempDialog" width="350px">
+      <Close left="335" @click="tempDialog = false" />
       <div
         class="none lighten-2 px-2"
         style="
@@ -12,21 +12,16 @@
           gap: 10px;
         "
       >
-        <v-card>
+        <v-card width="380px">
           <v-container>
             <v-card-text>
               <div class="text-center">
-                <v-avatar
-                  v-if="isSuccess"
-                  class="green"
-                  style="border: 3px solid"
-                  size="100"
-                  id="capture"
-                >
-                  <v-icon class="white" size="40" color="green"
-                    >mdi-thumb-up</v-icon
-                  >
+                <v-avatar v-if="isSuccess" size="150">
+                  <div class="primary--text" style="font-size: 30px">
+                    Ref: {{ code || "1234" }}
+                  </div>
                 </v-avatar>
+
                 <v-avatar
                   v-else
                   class="red"
@@ -35,12 +30,9 @@
                   id="capture"
                 >
                   <v-icon class="white" size="40" color="red"
-                    >mdi-thumb-up</v-icon
+                    >mdi-thumb-down</v-icon
                   >
                 </v-avatar>
-                <div class="mt-5">
-                  Your ref number is: <b>{{ code }}</b>
-                </div>
               </div>
             </v-card-text>
           </v-container>

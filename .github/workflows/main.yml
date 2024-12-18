@@ -40,5 +40,6 @@ jobs:
              TIMESTAMP=$(date +"%Y%m%d");
              cp -r /var/www/face-verifier/.nuxt /var/www/face-verifier/.nuxt-version-$TIMESTAMP;
            fi'
-
           sshpass -p "$SSH_PASSWORD" scp -o StrictHostKeyChecking=no -r .nuxt/* "$SSH_USERNAME@$SERVER_IP:/var/www/face-verifier/.nuxt/"
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no "$SSH_USERNAME@$SERVER_IP" \
+          'pm2 reload 3'
