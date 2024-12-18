@@ -1,39 +1,7 @@
 <template>
   <div class="text-center">
-    <style scoped>
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1;
-        pointer-events: none;
-      }
-
-      #video-container {
-        position: relative;
-        width: calc(85vw); /* Full width minus padding */
-        height: calc(85vh); /* Full height minus padding */
-      }
-
-      video,
-      canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%; /* Fill the container width */
-        height: 100%; /* Fill the container height */
-        object-fit: cover; /* Maintain proper aspect ratio */
-        border-radius: 10px; /* Optional: Rounded corners */
-      }
-    </style>
     <v-dialog v-model="tempDialog" width="750px">
       <Close left="740" @click="close" />
-
       <v-card style="overflow-y: hidden">
         <div
           class="white"
@@ -85,7 +53,7 @@
       </v-card>
     </v-dialog>
 
-    <div style="display: flex; padding: 10px 0">
+    <div style="display: flex">
       <div id="video-container">
         <video
           id="video"
@@ -98,16 +66,7 @@
       </div>
 
       <!-- origin from #76a2a0  -->
-      <div
-        style="
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background-color: #e0e0e0;
-          width: 25%;
-          border-radius: 10px;
-        "
-      >
+      <div class="camera-btn-container">
         <v-avatar
           style="border: 3px solid"
           size="100"

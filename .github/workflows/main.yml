@@ -37,7 +37,7 @@ jobs:
         run: |
           sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no "$SSH_USERNAME@$SERVER_IP" \
           'if [ -d /var/www/face-verifier/.nuxt ]; then
-             TIMESTAMP=$(date +"%Y%m%d%H%M%S");
+             TIMESTAMP=$(date +"%Y%m%d");
              cp -r /var/www/face-verifier/.nuxt /var/www/face-verifier/.nuxt-version-$TIMESTAMP;
            fi'
 
